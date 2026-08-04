@@ -1,0 +1,33 @@
+{
+  "//": "Local dev copy of the hostname -> tenant manifest. Per spec/MULTI_TENANT_INTEGRATION.md §2, production publishes this exact shape as a single static JSON file to S3 behind CloudFront -- no database, no lookup service. Keyed by window.location.host (hostname[:port]). Unknown host -> reject in the app, never leak which tenants exist (spec/tenant-domains-and-hipaa-isolation-team-brief.md §5).",
+
+  "localhost:5173": {
+    "tenantId": "corenroll",
+    "brand": "CoreEnroll (local dev)",
+    "keycloak": {
+      "url": "https://qa-sso.corenroll.com",
+      "realm": "organization-one",
+      "clientId": "admin-dashboard"
+    }
+  },
+
+  "corenroll.admin.halostream.example": {
+    "tenantId": "corenroll",
+    "brand": "CoreEnroll",
+    "keycloak": {
+      "url": "https://qa-sso.corenroll.com",
+      "realm": "corenroll",
+      "clientId": "admin-dashboard"
+    }
+  },
+
+  "iha.admin.halostream.example": {
+    "tenantId": "iha",
+    "brand": "IHA",
+    "keycloak": {
+      "url": "https://qa-sso.corenroll.com",
+      "realm": "iha",
+      "clientId": "admin-dashboard"
+    }
+  }
+}

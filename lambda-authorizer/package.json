@@ -1,0 +1,23 @@
+{
+  "name": "tenant-jwt-authorizer",
+  "version": "0.1.0",
+  "private": true,
+  "description": "API Gateway HTTP API Lambda REQUEST authorizer: verifies Keycloak JWTs, maps issuer -> tenant, injects X-Tenant-Id/X-Role/X-Party-Id context. See docs/aws-api-gateway-lambda-authorizer.md.",
+  "type": "module",
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "build:console-zip": "rm -rf dist-console tenant-jwt-authorizer.zip && mkdir dist-console && esbuild src/index.ts --bundle --platform=node --target=node20 --format=esm --outfile=dist-console/index.mjs && cd dist-console && zip -q ../tenant-jwt-authorizer.zip index.mjs"
+  },
+  "dependencies": {
+    "jose": "^5.9.6"
+  },
+  "devDependencies": {
+    "@types/aws-lambda": "^8.10.145",
+    "@types/node": "^20.16.10",
+    "esbuild": "^0.24.0",
+    "typescript": "^5.6.2",
+    "vitest": "^2.1.2"
+  }
+}
