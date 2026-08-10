@@ -19,7 +19,7 @@ team:
 stack:
   package_manager: "pnpm"
   lint_cmd: "pnpm exec eslint {file}"
-  test_cmd: "pnpm exec jest --testPathPattern {base}"
+  test_cmd: "pnpm exec vitest run {base}"
   extra_validate_cmd: "pnpm exec tsc --noEmit"
   flags:
     no_install: true
