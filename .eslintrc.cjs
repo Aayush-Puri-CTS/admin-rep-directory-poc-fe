@@ -14,5 +14,18 @@ module.exports = {
       'warn',
       { allowConstantExport: true },
     ],
+    '@typescript-eslint/no-explicit-any': 'error',
   },
+  overrides: [
+    {
+      files: ['src/**/*.{ts,tsx}'],
+      parserOptions: {
+        project: ['./tsconfig.app.json'],
+        tsconfigRootDir: __dirname,
+      },
+      rules: {
+        '@typescript-eslint/no-floating-promises': 'error',
+      },
+    },
+  ],
 };
