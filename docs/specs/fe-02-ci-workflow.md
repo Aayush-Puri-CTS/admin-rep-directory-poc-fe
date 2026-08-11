@@ -43,3 +43,19 @@
 
 - Writes to `.github/workflows/**` and `package.json` are gated by `permissions.ask_write_paths` — expect approval prompts; do not modify `package.json` unless strictly required (it already has `lint`/`test` scripts, so it should not need changes).
 - Do NOT commit, push, or mutate git state — that is the Coordinator's job.
+
+## Remediation R1 (2026-08-11) — CI job failed on `pnpm/action-setup`
+
+**Observed failure (PR #4 CI run):** `pnpm/action-setup@v4` → `Error: No pnpm version is specified. Please specify it ... in the GitHub Action config with the key "version" [or] in the package.json with the key "packageManager"`. Also an informational deprecation warning that the Actions runtime Node 20 is deprecated.
+
+**Root cause:** neither a `version:` on the action step nor a `packageManager` field in `package.json` exists, so `action-setup` cannot resolve which pnpm to install. Local dev uses **pnpm 11.9.0**; `pnpm-lock.yaml` is `lockfileVersion: 9.0`.
+
+**Fix (still Tier A — CI tooling):**
+1. Add `"packageManager": "pnpm@11.9.0"` to `package.json`. This matches the pnpm that generated the lockfile (guarantees `--frozen-lockfile` parity) and is auto-detected by `pnpm/action-setup@v4`, resolving the error. `package.json` is a gated write path — expect an approval prompt. Add ONLY this field; change nothing else in `package.json`.
+2. In `.github/workflows/ci.yml`, bump `node-version: 20` → `22` (current LTS) to be responsive to the deprecation note. Do not add a `version:` to the `pnpm/action-setup` step — the `packageManager` field is the single source of truth (adding both can conflict).
+
+**Acceptance for R1:**
+- `pnpm install --frozen-lockfile` succeeds locally (dev already on 11.9.0).
+- `ci.yml` still valid YAML; `pnpm lint`, `pnpm exec tsc --noEmit`, `pnpm test` still green locally.
+- `node scripts/validate-config.mjs` still passes (no `project.config.yml` change in R1).
+- Final validation is the live CI run on PR #4 after push (Coordinator observes).
