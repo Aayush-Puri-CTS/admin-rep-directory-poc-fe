@@ -22,7 +22,7 @@ apiClient.interceptors.request.use(async (config) => {
     try {
       await keycloak.updateToken(30);
     } catch {
-      keycloak.login();
+      void keycloak.login();
       return Promise.reject(new Error('Session expired — redirecting to login'));
     }
     config.headers.Authorization = `Bearer ${keycloak.token}`;
@@ -41,7 +41,7 @@ apiClient.interceptors.response.use(
   (response) => response,
   (error) => {
     if (axios.isAxiosError(error) && error.response?.status === 401) {
-      getKeycloak().login();
+      void getKeycloak().login();
     }
     return Promise.reject(error);
   },

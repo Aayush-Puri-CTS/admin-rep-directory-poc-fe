@@ -56,8 +56,8 @@ export function useCreateRep() {
   return useMutation({
     mutationFn: (body: CreateRepBodyDto) => api.createRep(body),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['reps', tenantId, 'directory'] });
-      queryClient.invalidateQueries({ queryKey: ['reps', tenantId, 'search'] });
+      void queryClient.invalidateQueries({ queryKey: ['reps', tenantId, 'directory'] });
+      void queryClient.invalidateQueries({ queryKey: ['reps', tenantId, 'search'] });
     },
   });
 }
@@ -66,9 +66,9 @@ function useInvalidateRep(repId: string) {
   const queryClient = useQueryClient();
   const { tenantId } = useTenant();
   return () => {
-    queryClient.invalidateQueries({ queryKey: ['reps', tenantId, 'detail', repId] });
-    queryClient.invalidateQueries({ queryKey: ['reps', tenantId, 'directory'] });
-    queryClient.invalidateQueries({ queryKey: ['reps', tenantId, 'search'] });
+    void queryClient.invalidateQueries({ queryKey: ['reps', tenantId, 'detail', repId] });
+    void queryClient.invalidateQueries({ queryKey: ['reps', tenantId, 'directory'] });
+    void queryClient.invalidateQueries({ queryKey: ['reps', tenantId, 'search'] });
   };
 }
 
@@ -118,7 +118,7 @@ export function useLinkRepToGroup(repId: string) {
   return useMutation({
     mutationFn: (body: LinkRepToGroupBodyDto) => api.linkRepToGroup(repId, body),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['reps', tenantId, 'groups', repId] });
+      void queryClient.invalidateQueries({ queryKey: ['reps', tenantId, 'groups', repId] });
     },
   });
 }
