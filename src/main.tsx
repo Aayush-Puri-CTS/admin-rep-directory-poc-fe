@@ -1,23 +1,15 @@
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { QueryClientProvider } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { BrowserRouter } from 'react-router-dom';
 import { ReactKeycloakProvider } from '@react-keycloak/web';
 import { initKeycloak } from './keycloak';
+import { queryClient } from './queryClient';
 import { resolveTenantFromHost } from './tenant/resolveTenant';
 import { TenantProvider, setResolvedTenant } from './context/TenantContext';
 import App from './App';
 import './index.css';
-
-const queryClient = new QueryClient({
-  defaultOptions: {
-    queries: {
-      retry: 1,
-      staleTime: 10_000,
-    },
-  },
-});
 
 // NOTE: onLoad is deliberately NOT 'check-sso' and checkLoginIframe is deliberately off.
 // @react-keycloak/web defaults onLoad to 'check-sso' internally, so it must be overridden

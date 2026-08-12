@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { getKeycloak } from '../keycloak';
+import { getKeycloak, redirectToLogin } from '../keycloak';
 import { getTenantId } from '../context/TenantContext';
 
 export const apiClient = axios.create({
@@ -22,7 +22,7 @@ apiClient.interceptors.request.use(async (config) => {
     try {
       await keycloak.updateToken(30);
     } catch {
-      void keycloak.login();
+      redirectToLogin();
       return Promise.reject(new Error('Session expired — redirecting to login'));
     }
     config.headers.Authorization = `Bearer ${keycloak.token}`;
@@ -41,7 +41,7 @@ apiClient.interceptors.response.use(
   (response) => response,
   (error) => {
     if (axios.isAxiosError(error) && error.response?.status === 401) {
-      void getKeycloak().login();
+      redirectToLogin();
     }
     return Promise.reject(error);
   },
