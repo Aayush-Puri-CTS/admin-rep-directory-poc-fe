@@ -10,6 +10,18 @@ import type { TenantKeycloakConfig } from './tenant/resolveTenant';
 // getKeycloak().
 let instance: Keycloak | null = null;
 
+// Single-flight guard (ADR-0001 Open Question A) — every path that needs to force a fresh login
+// (the axios interceptors in src/api/client.ts and the TanStack Query global onError in
+// src/queryClient.ts) routes through this helper instead of calling login() directly, so
+// concurrent 401s/session-expiry triggers cannot double-fire the redirect.
+let loginRedirectInFlight = false;
+
+export function redirectToLogin(): void {
+  if (loginRedirectInFlight) return;
+  loginRedirectInFlight = true;
+  void getKeycloak().login();
+}
+
 export function initKeycloak(config: TenantKeycloakConfig): Keycloak {
   if (instance) return instance;
 
@@ -22,7 +34,7 @@ export function initKeycloak(config: TenantKeycloakConfig): Keycloak {
   instance.onTokenExpired = () => {
     // Refresh if less than 60s of validity remains; Keycloak refresh tokens are single-use by
     // default, so a failure here (already-rotated/expired refresh token) forces a fresh login.
-    instance!.updateToken(60).catch(() => instance!.login());
+    instance!.updateToken(60).catch(() => redirectToLogin());
   };
 
   return instance;
